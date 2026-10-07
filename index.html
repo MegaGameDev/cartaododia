@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>A chave do meu coração</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Bebas+Neue&display=swap">
+<style>
+:root{
+  --kraft:#cdb08a;
+  --red:#c9342f; --red-deep:#9a2a27; --err:#b3201c; --ok:#2f7a4b;
+  --lilac:#a99bbd; --paper:#f5f6f8; --ink:#16161a; --field:#fff;
+  --hint-bg:rgba(255,255,255,.6); --hint-ink:#16161a;
+  --display:"Bebas Neue",Impact,"Arial Narrow",sans-serif;
+  --w:min(78vw,300px,calc((100dvh - 150px)/2.2));
+  --h:calc(var(--w)*1.25);
+  --edge:clamp(5px,1.8vw,8px);
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--kraft:#5b4630;--paper:#eceef2;--hint-bg:rgba(255,255,255,.16);--hint-ink:#f4efe8}
+}
+:root[data-theme="dark"]{--kraft:#5b4630;--paper:#eceef2;--hint-bg:rgba(255,255,255,.16);--hint-ink:#f4efe8}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%;margin:0}
+body{
+  background:var(--kraft);
+  background-image:repeating-linear-gradient(45deg,transparent 0 6px,rgba(0,0,0,.025) 6px 7px);
+  font-family:"Poppins",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:var(--ink);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.6rem;
+  overflow-x:hidden;
+}
+.scene{perspective:1400px}
+.card{position:relative;width:var(--w);height:var(--h);transform-style:preserve-3d;transition:transform .9s cubic-bezier(.5,0,.2,1)}
+.card.open{transform:translateY(calc(var(--h)/2))}
+
+/* página fixa: cadeado + senha */
+.page{
+  position:absolute;inset:0;background:var(--paper);
+  border:var(--edge) solid var(--red);
+  box-shadow:0 14px 30px rgba(0,0,0,.28);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.7rem;padding:0 8%;
+}
+.lock{width:44%;cursor:default;-webkit-tap-highlight-color:transparent}
+.unlocked .lock{cursor:pointer}
+.lock svg{width:100%;height:auto;display:block;overflow:visible}
+.shackle{transform-origin:135px 100px;transform:rotate(-38deg) translateY(-4px);transition:transform .7s cubic-bezier(.3,1.5,.5,1)}
+.locked .shackle{transform:none}
+.heart{transform-origin:100px 130px}
+.unlocked .heart{animation:beat .9s ease 1}
+@keyframes beat{30%{transform:scale(1.1)}60%{transform:scale(.97)}}
+
+.gate{width:100%;display:flex;flex-direction:column;gap:.5rem}
+.gate label{font-weight:600;font-size:1.05rem;text-align:center}
+.row{display:flex;gap:.5rem}
+.row input{
+  flex:1;min-width:0;height:48px;font-family:inherit;font-size:1.15rem;font-weight:500;
+  color:#16161a;background:var(--field);border:2px solid var(--ink);border-radius:10px;
+  padding:0 .8rem;text-align:center;letter-spacing:.08em;
+}
+.row input::placeholder{letter-spacing:.3em;color:#777}
+.row input:focus-visible{outline:3px solid var(--red);outline-offset:2px}
+.row input.bad{border-color:var(--err)}
+.row button{
+  height:48px;padding:0 1rem;font-family:inherit;font-size:1rem;font-weight:600;color:#fff;
+  background:var(--red);border:0;border-radius:10px;cursor:pointer;
+}
+.row button:focus-visible,.hint:focus-visible,.cover-front:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.msg{min-height:1.3em;margin:0;text-align:center;font-weight:500;font-size:.95rem;color:var(--err)}
+.msg.ok{color:var(--ok);font-weight:600}
+.tip{margin:0;text-align:center;font-size:.85rem;font-weight:500;color:#5a5a64;line-height:1.3}
+.unlocked .tip{display:none}
+.unlocked .gate .row{display:none}
+.unlocked .gate label{display:none}
+.shake{animation:shake .45s ease}
+@keyframes shake{20%{transform:translateX(-9px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}}
+
+/* capa */
+.cover{position:absolute;inset:0;transform-origin:center top;transform-style:preserve-3d;transition:transform 1s cubic-bezier(.5,0,.2,1)}
+.open .cover{transform:rotateX(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.cover-front{
+  background:linear-gradient(160deg,#d8453f,var(--red) 55%,#bf2f2b);
+  border:0;width:100%;cursor:pointer;box-shadow:0 14px 30px rgba(0,0,0,.3);-webkit-tap-highlight-color:transparent;
+}
+.cover-back{
+  transform:rotateX(180deg);background:var(--paper);border:var(--edge) solid var(--red);
+  display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 8%;
+}
+.cover-back h1{margin:0;font-family:var(--display);font-weight:400;font-size:clamp(2.8rem,16vw,4.2rem);line-height:.92;letter-spacing:.02em}
+.mini{width:28px;height:auto;margin:.9rem 0 .6rem}
+.cover-back p{margin:0;font-weight:500;font-size:clamp(1rem,4.4vw,1.25rem);letter-spacing:.02em}
+
+.hint{
+  font-family:inherit;font-size:1rem;font-weight:500;color:var(--hint-ink);background:var(--hint-bg);
+  border:0;border-radius:999px;min-height:48px;padding:0 1.6rem;cursor:pointer;
+  transition:transform .9s cubic-bezier(.5,0,.2,1);
+}
+body.is-open .hint{transform:translateY(calc(var(--h)/2))}
+
+.hearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:10}
+.hearts span{position:absolute;display:block;will-change:transform,opacity}
+.hearts svg{width:100%;height:100%;display:block}
+
+@media (min-width:760px) and (min-aspect-ratio:1/1){
+  :root{--w:min(44vw,280px,calc((100dvh - 150px)/1.4));--h:calc(var(--w)*1.4)}
+  .card.open{transform:translateX(calc(var(--w)/2))}
+  body.is-open .hint{transform:none}
+  .cover{transform-origin:left center}
+  .open .cover{transform:rotateY(-180deg)}
+  .cover-back{transform:rotateY(180deg);padding:14%}
+  .cover-back h1{font-size:clamp(2rem,4.6vw,3.3rem)}
+  .cover-back p{font-size:.95rem}
+}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01s!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="scene">
+  <div class="card locked" id="card">
+    <div class="page" id="page">
+      <div class="lock" id="lock" role="img" aria-label="Cadeado em formato de coração, trancado">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <g class="shackle">
+            <path d="M65 110V52a35 35 0 0 1 70 0v10" fill="none" stroke="var(--lilac)" stroke-width="20" stroke-linecap="round"/>
+          </g>
+          <g class="heart">
+            <path d="M100 192C22 134 8 74 54 62c25-6 42 8 46 26 4-18 21-32 46-26 46 12 32 72-46 130Z" fill="var(--red-deep)"/>
+            <circle cx="100" cy="112" r="11" fill="var(--paper)"/>
+            <path d="M94 116h12l5 26H89Z" fill="var(--paper)"/>
+          </g>
+        </svg>
+      </div>
+      <div class="gate" id="gate">
+        <label for="pw">Digite a senha</label>
+        <div class="row">
+          <input id="pw" type="text" placeholder="*****" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go">
+          <button id="go" type="button">Destravar</button>
+        </div>
+        <p class="msg" id="msg" role="status" aria-live="polite"></p>
+        <p class="tip">Dica: Ama doces e o Everton Jr.</p>
+      </div>
+    </div>
+    <div class="cover">
+      <button class="face cover-front" id="open" type="button" aria-label="Abrir o cartão"></button>
+      <div class="face cover-back">
+        <h1>Você tem<br>a chave</h1>
+        <svg class="mini" viewBox="0 0 200 200" aria-hidden="true"><path d="M100 192C22 134 8 74 54 62c25-6 42 8 46 26 4-18 21-32 46-26 46 12 32 72-46 130Z" fill="var(--red)"/></svg>
+        <p>pra minha esquerdista</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<button class="hint" id="hint" type="button">Abrir cartão</button>
+<div class="hearts" id="hearts" aria-hidden="true"></div>
+
+<script>
+(function(){
+  var card=document.getElementById('card'),
+      lock=document.getElementById('lock'),
+      hint=document.getElementById('hint'),
+      pw=document.getElementById('pw'),
+      msg=document.getElementById('msg'),
+      gate=document.getElementById('gate'),
+      layer=document.getElementById('hearts'),
+      reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      colors=['#c9342f','#e0566b','#f08aa0','#a99bbd','#9a2a27'],
+      PATH='M100 192C22 134 8 74 54 62c25-6 42 8 46 26 4-18 21-32 46-26 46 12 32 72-46 130Z';
+
+  function norm(s){
+    return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase();
+  }
+  function toggleCard(){
+    var open=card.classList.toggle('open');
+    document.body.classList.toggle('is-open',open);
+    hint.textContent=open?'Fechar cartão':'Abrir cartão';
+  }
+  function rand(a,b){return a+Math.random()*(b-a)}
+  function makeHeart(size){
+    var s=document.createElement('span');
+    s.style.width=s.style.height=size+'px';
+    s.innerHTML='<svg viewBox="0 0 200 200"><path d="'+PATH+'" fill="'+colors[Math.floor(Math.random()*colors.length)]+'"/></svg>';
+    layer.appendChild(s);
+    return s;
+  }
+  function celebrate(){
+    if(reduce)return;
+    var vw=window.innerWidth,vh=window.innerHeight,r=lock.getBoundingClientRect(),
+        cx=r.left+r.width/2,cy=r.top+r.height/2,i,el,a,d,anim;
+    for(i=0;i<18;i++){
+      el=makeHeart(rand(18,34));
+      el.style.left=cx+'px';el.style.top=cy+'px';
+      a=(Math.PI*2*i)/18+rand(-.2,.2);d=rand(90,220);
+      anim=el.animate([
+        {transform:'translate(-50%,-50%) scale(.2)',opacity:1},
+        {transform:'translate(calc(-50% + '+Math.cos(a)*d+'px),calc(-50% + '+Math.sin(a)*d+'px)) scale(1)',opacity:0}
+      ],{duration:rand(900,1400),easing:'cubic-bezier(.2,.7,.3,1)',fill:'forwards'});
+      anim.onfinish=(function(e){return function(){e.remove()}})(el);
+    }
+    for(i=0;i<46;i++){
+      el=makeHeart(rand(18,46));
+      el.style.left=rand(0,vw-30)+'px';el.style.top=vh+'px';
+      var sway=rand(-60,60),rot=rand(-40,40);
+      anim=el.animate([
+        {transform:'translate(0,0) rotate(0deg)',opacity:0},
+        {opacity:1,offset:.12},
+        {transform:'translate('+sway+'px,-'+(vh+120)+'px) rotate('+rot+'deg)',opacity:.9}
+      ],{duration:rand(2600,4800),delay:rand(0,1000),easing:'ease-out',fill:'forwards'});
+      anim.onfinish=(function(e){return function(){e.remove()}})(el);
+    }
+  }
+  function tryPassword(){
+    if(norm(pw.value)==='luiza'){
+      card.classList.remove('locked');
+      card.classList.add('unlocked');
+      pw.classList.remove('bad');
+      pw.blur();
+      lock.setAttribute('aria-label','Cadeado em formato de coração, destravado. Toque para ver os corações de novo.');
+      msg.textContent='Destravado. Você tem a chave.';
+      msg.className='msg ok';
+      celebrate();
+    }else{
+      pw.classList.add('bad');
+      msg.textContent='Senha errada. Tente de novo.';
+      gate.classList.remove('shake');void gate.offsetWidth;gate.classList.add('shake');
+      pw.select();
+    }
+  }
+  document.getElementById('open').addEventListener('click',function(){
+    if(!card.classList.contains('open'))toggleCard();
+  });
+  hint.addEventListener('click',toggleCard);
+  document.getElementById('go').addEventListener('click',tryPassword);
+  pw.addEventListener('keydown',function(e){if(e.key==='Enter')tryPassword()});
+  pw.addEventListener('input',function(){pw.classList.remove('bad');if(!card.classList.contains('unlocked'))msg.textContent=''});
+  lock.addEventListener('click',function(){if(card.classList.contains('unlocked'))celebrate()});
+})();
+</script>
+</body>
+</html>
